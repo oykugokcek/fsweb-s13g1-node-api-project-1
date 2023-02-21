@@ -1,9 +1,11 @@
 // SUNUCUYU BU DOSYAYA KURUN
 const express = require("express");
+const cors = require("cors");
 const Users = require("./users/model");
 
 const server = express();
 server.use(express.json());
+server.use(cors());
 
 server.get("/api/users", async (req, res) => {
   let users = await Users.find();
@@ -38,8 +40,8 @@ server.post("/api/users", async (req, res) => {
         .status(400)
         .json({ message: "Lütfen kullanıcı için bir name ve bio sağlayın" });
     } else {
-      await Users.insert(user);
-      res.status(200).json(user);
+      let insertedUser = await Users.insert(user);
+      res.status(201).json(insertedUser);
     }
   } catch (error) {
     res
@@ -56,7 +58,7 @@ server.delete("/api/users/:id", async (req, res) => {
         .status(404)
         .json({ message: "Belirtilen ID'li kullanıcı bulunamadı" });
     } else {
-      res.status(200).json(Users);
+      res.status(200).json(user);
     }
   } catch (error) {
     res.status(500).json({ message: "Kullanıcı silinemedi" });
